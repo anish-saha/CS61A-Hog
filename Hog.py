@@ -86,7 +86,7 @@ def next_prime(score):
     if is_prime(score) == True:
         score += 1
         while is_prime(score) == False:
-            score +=1
+            score += 1
     return score
 
 
@@ -115,13 +115,13 @@ def is_swap(score0, score1):
     if digit01 >= 10:
         digit01 = digit01 % 10
     digit02 = score0 % 10
-    rev_score0 = (10*digit02) + digit01
+    rev_score0 = (10 * digit02) + digit01
     
     digit11 = int(score1 / 10)
     if digit11 >= 10:
         digit11 = digit11 % 10
     digit12 = score1 % 10
-    rev_score1 = (10*digit12) + digit11
+    rev_score1 = (10 * digit12) + digit11
 
     if score0 == rev_score1 or rev_score0 == score1:
         return True
