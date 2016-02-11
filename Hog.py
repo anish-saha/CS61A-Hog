@@ -7,7 +7,7 @@ GOAL_SCORE = 100  # The goal of Hog is to score 100 points.
 
 
 ######################
-# Phase 1: Simulator #
+# Phase 1: Simulator #2
 ######################
 
 
@@ -86,7 +86,7 @@ def next_prime(score):
     if is_prime(score) == True:
         score += 1
         while is_prime(score) == False:
-            score += 1
+            score +=1
     return score
 
 
@@ -115,13 +115,13 @@ def is_swap(score0, score1):
     if digit01 >= 10:
         digit01 = digit01 % 10
     digit02 = score0 % 10
-    rev_score0 = (10 * digit02) + digit01
+    rev_score0 = (10*digit02) + digit01
     
     digit11 = int(score1 / 10)
     if digit11 >= 10:
         digit11 = digit11 % 10
     digit12 = score1 % 10
-    rev_score1 = (10 * digit12) + digit11
+    rev_score1 = (10*digit12) + digit11
 
     if score0 == rev_score1 or rev_score0 == score1:
         return True
@@ -236,7 +236,16 @@ def make_averaged(fn, num_samples=1000):
     not apply.
     """
     # BEGIN Question 6
-    "*** REPLACE THIS LINE ***"
+
+    def avg(*args):
+        tot = 0
+        i = 1
+        while i <= num_samples:
+            tot = tot + fn(*args)
+            i += 1
+        return tot / num_samples
+    return avg
+    
     # END Question 6
 
 
@@ -250,7 +259,19 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     10
     """
     # BEGIN Question 7
-    "*** REPLACE THIS LINE ***"
+
+    final = 0
+    num_dice = 10
+    avg = 0
+    
+    while num_dice > 0:
+        new_ave = make_averaged(roll_dice)(num_dice, dice)
+        final = max(final, new_ave)
+        if new_ave >= final:
+            avg = num_dice
+        num_dice -= 1
+    return avg
+    
     # END Question 7
 
 
@@ -300,8 +321,21 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=5):
     and rolls NUM_ROLLS otherwise.
     """
     # BEGIN Question 8
-    "*** REPLACE THIS LINE ***"
-    return 5  # Replace this statement
+
+    points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
+    tot_score = score + points
+    if points >= margin:
+        return 0
+    elif is_prime(points) == True:
+        new_points = next_prime(points)
+        tot_score = score + new_points
+        if tot_score - score >= margin:
+            return 0
+        else:
+            return num_rolls
+    else:
+        return num_rolls
+   
     # END Question 8
 
 
@@ -310,19 +344,101 @@ def swap_strategy(score, opponent_score, num_rolls=5):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN Question 9
-    "*** REPLACE THIS LINE ***"
-    return 5  # Replace this statement
+
+    points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
+    tot_score = score + points
+    if is_swap(tot_score, opponent_score) == True:
+        x = tot_score
+        y = opponent_score
+        tot_score = y
+        opponent_score = x                
+        if tot_score > opponent_score:
+            return 0
+        else:
+            return num_rolls
+
+    elif is_prime(points) == True:
+        new_points = next_prime(points)
+        tot_score = score + new_points
+        if is_swap(tot_score, opponent_score) == True:
+            x = tot_score
+            y = opponent_score
+            tot_score = y
+            opponent_score = x                
+            if tot_score > opponent_score:
+                return 0
+            else:
+                return num_rolls
+        else:
+            return num_rolls
+
+    else:
+        return num_rolls
+    
     # END Question 9
 
+def wild_strategy(score, opponent_score, num_rolls=5):
+    points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
+    tot_score = score + points
+    if (tot_score + opponent_score) % 7 == 0:
+        return 0    
+    else:
+        return num_rolls
 
+def desired_pigout(score, opponent_score):
+    num_rolls = 1
+    for i in range(3,11):
+        num_rolls = i
+        if is_swap(score, opponent_score + i) == True:
+            return num_rolls
+    return 1
+     
 def final_strategy(score, opponent_score):
     """Write a brief description of your final strategy.
 
-    *** YOUR DESCRIPTION HERE ***
+    I used a combination of several strategies. First of all, if using free
+    bacon resulted in getting a score of 100 or higher, 0 should always be
+    rolled. Next, I implemented a combination of the swap_strategy and the
+    bacon_strategy methods, as well as created a couple new methods to increase
+    the winrate. My desired_pigout method did so by increasing the probabability
+    of intentional pig-out to trigger a beneficial swap, which my wild_strategy
+    method intended to force the opponent into a hog wild situation where they
+    would be more likely to pig out by rolling a four-sided dice. Finally, I
+    implemented conditions to roll fewer dice (less risk) while ahead and more
+    dice (high risk, high reward) when behind. Experimenting with the numbers
+    and arguments, along with trial and error with the order of these methods,
+    eventually led to my success in achieving >77% winrate with final_strategy.
+    
     """
     # BEGIN Question 10
-    "*** REPLACE THIS LINE ***"
-    return 5  # Replace this statement
+    
+    num_rolls = 4
+    diff = 100 - score
+    bacon_pts = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
+    
+    if bacon_pts >= diff:
+        return 0    
+    if swap_strategy(score, opponent_score, 4) == 0:
+        return 0
+    if desired_pigout(score, opponent_score) > 1:
+        if score < opponent_score:    
+            return desired_pigout(score, opponent_score)
+    if bacon_strategy(score, opponent_score, 6, 4) == 0:
+        return 0
+    if wild_strategy(score, opponent_score, 4) == 0:
+        return 0
+
+    if score - 21 > opponent_score:
+        return 3
+    if score - 11 > opponent_score:
+        return 2
+    if score + 20 < opponent_score:
+        return 5
+    if score + 32 < opponent_score:
+        return 6
+    
+    return num_rolls
+
     # END Question 10
 
 
