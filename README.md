@@ -7,6 +7,7 @@ add one greater than the highest digit of the opponents score to your own. <br>
 2) If the sum of the two player's score is seven, special four-sided dice are used for the current turn. <br>
 3) If two players have scores that are reverse of each other (ex: 07 and 70), then the players swap scores. <br>
 4) If a player has a prime number score, that score is raised to the next prime number.
+5) First player to 100 points wins! Have fun!
 
 To play, simply run the command `python3 hog.py`
 
