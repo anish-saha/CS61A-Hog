@@ -18,7 +18,6 @@ def roll_dice(num_rolls, dice=six_sided):
     # These assert statements ensure that num_rolls is a positive integer.
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls > 0, 'Must roll at least once.'
-    # BEGIN Question 1
 
     x = 0
     score = 0
@@ -36,10 +35,8 @@ def roll_dice(num_rolls, dice=six_sided):
         return score
     else:
         return score
+
     
-    # END Question 1
-
-
 def take_turn(num_rolls, opponent_score, dice=six_sided):
     """Simulate a turn rolling NUM_ROLLS dice, which may be 0 (Free bacon).
 
@@ -51,7 +48,6 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     assert num_rolls >= 0, 'Cannot roll a negative number of dice.'
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     assert opponent_score < 100, 'The game should be over.'
-    # BEGIN Question 2
 
     score = 0 
     if num_rolls == 0:
@@ -70,9 +66,10 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
             score = next_prime(score)
         return score
     
-    # END Question 2
-
+    
 def is_prime(score):
+    """Determines whether the input score is prime
+    """    
     prime = True
     if score == 1 or score == 0:
         prime = False
@@ -82,7 +79,10 @@ def is_prime(score):
             prime = False
     return prime
 
+
 def next_prime(score):
+    """Finds the first prime number after an input score
+    """    
     if is_prime(score) == True:
         score += 1
         while is_prime(score) == False:
@@ -93,24 +93,18 @@ def next_prime(score):
 def select_dice(score, opponent_score):
     """Select six-sided dice unless the sum of SCORE and OPPONENT_SCORE is a
     multiple of 7, in which case select four-sided dice (Hog wild).
-    """
-    # BEGIN Question 3
-
+    """   
     game_total = score + opponent_score
     if game_total % 7 == 0:
         return four_sided
     else:
         return six_sided
+
     
-    # END Question 3
-
-
 def is_swap(score0, score1):
     """Returns whether the last two digits of SCORE0 and SCORE1 are reversed
     versions of each other, such as 19 and 91.
-    """
-    # BEGIN Question 4
-
+    """    
     digit01 = int(score0 / 10)
     if digit01 >= 10:
         digit01 = digit01 % 10
@@ -127,19 +121,17 @@ def is_swap(score0, score1):
         return True
     else:
         return False    
+
     
-    # END Question 4
-
-
 def other(who):
     """Return the other player, for a player WHO numbered 0 or 1.
-
     >>> other(0)
     1
     >>> other(1)
     0
-    """
+    """   
     return 1 - who
+
 
 def play(strategy0, strategy1, score0=0, score1=0, goal=GOAL_SCORE):
     """Simulate a game and return the final scores of both players, with
@@ -153,9 +145,8 @@ def play(strategy0, strategy1, score0=0, score1=0, goal=GOAL_SCORE):
     strategy1:  The strategy function for Player 1, who plays second
     score0   :  The starting score for Player 0
     score1   :  The starting score for Player 1
-    """
+    """    
     who = 0  # Which player is about to take a turn, 0 (first) or 1 (second)
-    # BEGIN Question 5
     opponent_score = 0
     count = 0
 
@@ -185,7 +176,6 @@ def play(strategy0, strategy1, score0=0, score1=0, goal=GOAL_SCORE):
             score1 = x                
         who = other(who)
 
-    # END Question 5
     return score0, score1
 
 
@@ -209,9 +199,7 @@ def always_roll(n):
     """
     def strategy(score, opponent_score):
         return n
-
     return strategy
-
 
 # Experiments
 
@@ -235,7 +223,6 @@ def make_averaged(fn, num_samples=1000):
     Note that the last example uses roll_dice so the hogtimus prime rule does
     not apply.
     """
-    # BEGIN Question 6
 
     def avg(*args):
         tot = 0
@@ -246,9 +233,7 @@ def make_averaged(fn, num_samples=1000):
         return tot / num_samples
     return avg
     
-    # END Question 6
-
-
+    
 def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """Return the number of dice (1 to 10) that gives the highest average turn
     score by calling roll_dice with the provided DICE over NUM_SAMPLES times.
@@ -258,8 +243,6 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     >>> max_scoring_num_rolls(dice)
     10
     """
-    # BEGIN Question 7
-
     final = 0
     num_dice = 10
     avg = 0
@@ -272,8 +255,6 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
         num_dice -= 1
     return avg
     
-    # END Question 7
-
 
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
@@ -320,8 +301,6 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=5):
     """This strategy rolls 0 dice if that gives at least MARGIN points,
     and rolls NUM_ROLLS otherwise.
     """
-    # BEGIN Question 8
-
     points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
     tot_score = score + points
     if points >= margin:
@@ -336,15 +315,11 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=5):
     else:
         return num_rolls
    
-    # END Question 8
-
-
+    
 def swap_strategy(score, opponent_score, num_rolls=5):
     """This strategy rolls 0 dice when it results in a beneficial swap and
     rolls NUM_ROLLS otherwise.
     """
-    # BEGIN Question 9
-
     points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
     tot_score = score + points
     if is_swap(tot_score, opponent_score) == True:
@@ -356,7 +331,6 @@ def swap_strategy(score, opponent_score, num_rolls=5):
             return 0
         else:
             return num_rolls
-
     elif is_prime(points) == True:
         new_points = next_prime(points)
         tot_score = score + new_points
@@ -371,11 +345,9 @@ def swap_strategy(score, opponent_score, num_rolls=5):
                 return num_rolls
         else:
             return num_rolls
-
     else:
         return num_rolls
     
-    # END Question 9
 
 def wild_strategy(score, opponent_score, num_rolls=5):
     points = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
@@ -394,8 +366,7 @@ def desired_pigout(score, opponent_score):
     return 1
      
 def final_strategy(score, opponent_score):
-    """Write a brief description of your final strategy.
-
+    """
     I used a combination of several strategies. First of all, if using free
     bacon resulted in getting a score of 100 or higher, 0 should always be
     rolled. Next, I implemented a combination of the swap_strategy and the
@@ -407,11 +378,8 @@ def final_strategy(score, opponent_score):
     implemented conditions to roll fewer dice (less risk) while ahead and more
     dice (high risk, high reward) when behind. Experimenting with the numbers
     and arguments, along with trial and error with the order of these methods,
-    eventually led to my success in achieving >77% winrate with final_strategy.
-    
-    """
-    # BEGIN Question 10
-    
+    eventually led to my success in achieving ~80% winrate with final_strategy.
+    """    
     num_rolls = 4
     diff = 100 - score
     bacon_pts = max((int(opponent_score / 10), int(opponent_score % 10))) + 1
@@ -438,9 +406,6 @@ def final_strategy(score, opponent_score):
         return 6
     
     return num_rolls
-
-    # END Question 10
-
 
 ##########################
 # Command Line Interface #
