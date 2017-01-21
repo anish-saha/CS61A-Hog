@@ -9,7 +9,7 @@ add one greater than the highest digit of the opponents score to your own. <br>
 4) If a player has a prime number score, that score is raised to the next prime number. <br>
 5) First player to 100 points wins. Have fun! :)
 
-To play, simply run the command `python3 hog.py`
+To play, simply use the following command: `python3 hog.py`
 
 ================================
 
